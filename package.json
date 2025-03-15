@@ -1,0 +1,28 @@
+{
+  "name": "hokage-anime",
+  "version": "1.0.0",
+  "description": "Anime streaming platform with user authentication and favorites",
+  "main": "backend/index.js",
+  "scripts": {
+    "start": "node backend/index.js",
+    "build": "cd frontend && npm install && npm run build",
+    "dev:server": "cd backend && npm run dev",
+    "dev:client": "cd frontend && npm start",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "keywords": [
+    "anime",
+    "streaming",
+    "mern",
+    "react"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^8.2.0"
+  }
+} 
