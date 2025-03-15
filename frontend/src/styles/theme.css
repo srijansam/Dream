@@ -1,0 +1,92 @@
+/* Theme Variables */
+:root {
+    /* Dark Theme (Default) */
+    --dark-bg-primary: linear-gradient(to bottom, #1a1f25, #0c1015);
+    --dark-bg-secondary: #222;
+    --dark-text: #fff;
+    --dark-card-bg: #333;
+    --dark-input-bg: #444;
+    --dark-border: #555;
+    
+    /* Light Theme */
+    --light-bg-primary: linear-gradient(to bottom, #f5f7fa, #e4e7eb);
+    --light-bg-secondary: #f0f2f5;
+    --light-text: #333;
+    --light-card-bg: #fff;
+    --light-input-bg: #f9f9f9;
+    --light-border: #ddd;
+    
+    /* Fixed Components - Not affected by theme */
+    --navbar-bg: #708090;
+    --navbar-text: #fff;
+    --sidebar-bg: rgba(34, 34, 34, 0.9);
+    --sidebar-text: #fff;
+}
+
+/* Dark Theme Styles */
+body.dark-theme {
+    background: var(--dark-bg-primary);
+    color: var(--dark-text);
+}
+
+body.dark-theme .card {
+    background-color: var(--dark-card-bg) !important;
+    color: var(--dark-text) !important;
+    border-color: var(--dark-border) !important;
+}
+
+body.dark-theme .form-control,
+body.dark-theme .form-select {
+    background-color: var(--dark-input-bg) !important;
+    color: var(--dark-text) !important;
+    border-color: var(--dark-border) !important;
+}
+
+/* Light Theme Styles */
+body.light-theme {
+    background: var(--light-bg-primary);
+    color: var(--light-text);
+}
+
+body.light-theme .card {
+    background-color: var(--light-card-bg) !important;
+    color: var(--light-text) !important;
+    border-color: var(--light-border) !important;
+}
+
+body.light-theme .form-control,
+body.light-theme .form-select {
+    background-color: var(--light-input-bg) !important;
+    color: var(--light-text) !important;
+    border-color: var(--light-border) !important;
+}
+
+/* Fixed Components - Not affected by theme */
+.navbar {
+    background-color: var(--navbar-bg) !important;
+}
+
+.navbar .navbar-brand,
+.navbar .navbar-text,
+.navbar .nav-link,
+.navbar .btn-outline-light {
+    color: var(--navbar-text) !important;
+}
+
+.sidebar {
+    background: var(--sidebar-bg) !important;
+    color: var(--sidebar-text) !important;
+}
+
+.sidebar-link {
+    color: var(--sidebar-text) !important;
+}
+
+.sidebar-link:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Transition for smooth theme switching */
+body, .card, .form-control, .form-select {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+} 
