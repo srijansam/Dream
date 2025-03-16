@@ -22,9 +22,14 @@ services:
           name: hokage-anime
           type: web
           property: url
-          envVarKey: CALLBACK_URL
         sync: false
       - key: EMAIL_USER
         sync: false
       - key: EMAIL_PASSWORD
-        sync: false 
+        sync: false
+    healthCheckPath: /
+    autoDeploy: true
+    disk:
+      name: hokage-data
+      mountPath: /data
+      sizeGB: 1 

@@ -107,10 +107,15 @@ app.use(session({ secret: "secret", resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Set the callback URL based on environment
+const callbackURL = process.env.NODE_ENV === "production" 
+  ? `${process.env.CALLBACK_URL}/auth/google/callback` 
+  : "http://localhost:5001/auth/google/callback";
+
 passport.use(new passportGoogle({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "/auth/google/callback"
+    callbackURL: callbackURL
 }, async (accessToken, refreshToken, profile, done) => {
     let user = await User.findOne({ googleId: profile.id });
     if (!user) {
@@ -132,7 +137,10 @@ app.get("/auth/google/callback", passport.authenticate("google", { failureRedire
     // Generate JWT token for Google authenticated user
     const token = jwt.sign({ userId: req.user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
     // Redirect to frontend with token
-    res.redirect(`http://localhost:3000/auth/google/callback?token=${token}`);
+    const redirectURL = process.env.NODE_ENV === "production" 
+      ? `/auth/google/callback?token=${token}` 
+      : `http://localhost:3000/auth/google/callback?token=${token}`;
+    res.redirect(redirectURL);
 });
 
 /////auth token
@@ -159,41 +167,69 @@ const authenticateToken = (req, res, next) => {
 const fetchAndStoreAnime = async () => {
     try {
         console.log("Fetching YouTube data...");
+        
+        // Check if YouTube API key is available
+        if (!process.env.YOUTUBE_API_KEY) {
+            console.error("YouTube API key is missing. Please set the YOUTUBE_API_KEY environment variable.");
+            return;
+        }
+        
         let nextPageToken = "";
         let videos = [];
         const BASE_URL = "https://www.googleapis.com/youtube/v3/search";
+        const MAX_VIDEOS = 50; // Reduced for faster loading and to avoid quota issues
 
-        while (videos.length < 500) {
-            const response = await axios.get(BASE_URL, {
-                params: {
-                    key: process.env.YOUTUBE_API_KEY,
-                    channelId: "UCP8E_gJhRMApuQYOQ21MkLA",
-                    part: "snippet",
-                    type: "video",
-                    maxResults: 50,
-                    pageToken: nextPageToken
+        while (videos.length < MAX_VIDEOS) {
+            console.log(`Fetching YouTube data with token: ${nextPageToken || 'initial'}`);
+            try {
+                const response = await axios.get(BASE_URL, {
+                    params: {
+                        key: process.env.YOUTUBE_API_KEY,
+                        channelId: "UCP8E_gJhRMApuQYOQ21MkLA",
+                        part: "snippet",
+                        type: "video",
+                        maxResults: 50,
+                        pageToken: nextPageToken
+                    },
+                    timeout: 10000 // 10 second timeout
+                });
+
+                if (!response.data.items || response.data.items.length === 0) {
+                    console.log("No videos found in response");
+                    break;
                 }
-            });
 
-            if (!response.data.items || response.data.items.length === 0) break;
-
-            videos.push(
-                ...response.data.items.map(video => ({
+                const newVideos = response.data.items.map(video => ({
                     title: video.snippet.title,
                     description: video.snippet.description,
                     youtubeEmbedUrl: `https://www.youtube.com/embed/${video.id.videoId}`
-                }))
-            );
-
-            console.log(`Fetched ${videos.length} videos so far...`);
-            nextPageToken = response.data.nextPageToken;
-            if (!nextPageToken) break;
+                }));
+                
+                videos.push(...newVideos);
+                console.log(`Fetched ${videos.length} videos so far...`);
+                
+                nextPageToken = response.data.nextPageToken;
+                if (!nextPageToken) {
+                    console.log("No next page token, ending fetch");
+                    break;
+                }
+            } catch (apiError) {
+                console.error("Error in YouTube API request:", apiError.message);
+                if (apiError.response) {
+                    console.error("YouTube API error details:", apiError.response.data);
+                }
+                break;
+            }
         }
 
-        await Anime.deleteMany();
-        await Anime.insertMany(videos);
-
-        console.log(`YouTube data stored successfully! Total videos: ${videos.length}`);
+        if (videos.length > 0) {
+            console.log(`Storing ${videos.length} videos in database...`);
+            await Anime.deleteMany();
+            await Anime.insertMany(videos);
+            console.log(`YouTube data stored successfully! Total videos: ${videos.length}`);
+        } else {
+            console.error("No videos were fetched from YouTube API");
+        }
     } catch (err) {
         console.error("Error fetching YouTube data:", err);
     }
@@ -374,8 +410,22 @@ let emailConfigured = false;
 try {
     // Check if email credentials are provided
     if (process.env.EMAIL_USER && process.env.EMAIL_PASSWORD) {
+        // Determine email service based on the email address
+        const emailDomain = process.env.EMAIL_USER.split('@')[1];
+        let service = 'gmail'; // Default to Gmail
+        
+        // Configure for different email providers
+        if (emailDomain === 'outlook.com' || emailDomain === 'hotmail.com') {
+            service = 'outlook';
+        } else if (emailDomain === 'yahoo.com') {
+            service = 'yahoo';
+        }
+        
+        console.log(`Setting up email with service: ${service} for domain: ${emailDomain}`);
+        
+        // Create transporter with appropriate service
         transporter = nodemailer.createTransport({
-            service: "gmail",
+            service: service,
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASSWORD
@@ -387,7 +437,32 @@ try {
             if (error) {
                 console.error("Email configuration error:", error);
                 console.log("Email sending will be disabled. Please check your credentials.");
-                emailConfigured = false;
+                
+                // Try SMTP configuration as fallback for Gmail
+                if (service === 'gmail') {
+                    console.log("Trying alternative SMTP configuration for Gmail...");
+                    transporter = nodemailer.createTransport({
+                        host: 'smtp.gmail.com',
+                        port: 465,
+                        secure: true,
+                        auth: {
+                            user: process.env.EMAIL_USER,
+                            pass: process.env.EMAIL_PASSWORD
+                        }
+                    });
+                    
+                    transporter.verify((err, success) => {
+                        if (err) {
+                            console.error("Alternative SMTP configuration also failed:", err);
+                            emailConfigured = false;
+                        } else {
+                            console.log("Alternative SMTP configuration successful!");
+                            emailConfigured = true;
+                        }
+                    });
+                } else {
+                    emailConfigured = false;
+                }
             } else {
                 console.log("Email server is ready to send messages");
                 emailConfigured = true;
@@ -426,6 +501,14 @@ const sendEmail = async (to, subject, text, html) => {
         return true;
     } catch (error) {
         console.error("Error sending email:", error);
+        
+        // Log detailed error information
+        if (error.code === 'EAUTH') {
+            console.error("Authentication error. Check your email credentials.");
+        } else if (error.code === 'ESOCKET') {
+            console.error("Socket error. Check your network connection and email service settings.");
+        }
+        
         return false;
     }
 };
