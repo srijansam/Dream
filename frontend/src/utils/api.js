@@ -24,6 +24,13 @@ const INITIAL_RETRY_DELAY = 1000; // 1 second
 // Helper function to wait
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
+// Helper function to handle loading state
+const handleLoading = (loadingCallback, value) => {
+    if (typeof loadingCallback === 'function') {
+        loadingCallback(value);
+    }
+};
+
 // Add a request interceptor to include the JWT token in headers
 api.interceptors.request.use(
     (config) => {
@@ -99,38 +106,38 @@ api.interceptors.response.use(
 api.withLoading = {
     get: async (url, config = {}) => {
         try {
-            config.loading?.(true);
+            handleLoading(config.loading, true);
             const response = await api.get(url, config);
             return response;
         } finally {
-            config.loading?.(false);
+            handleLoading(config.loading, false);
         }
     },
     post: async (url, data, config = {}) => {
         try {
-            config.loading?.(true);
+            handleLoading(config.loading, true);
             const response = await api.post(url, data, config);
             return response;
         } finally {
-            config.loading?.(false);
+            handleLoading(config.loading, false);
         }
     },
     put: async (url, data, config = {}) => {
         try {
-            config.loading?.(true);
+            handleLoading(config.loading, true);
             const response = await api.put(url, data, config);
             return response;
         } finally {
-            config.loading?.(false);
+            handleLoading(config.loading, false);
         }
     },
     delete: async (url, config = {}) => {
         try {
-            config.loading?.(true);
+            handleLoading(config.loading, true);
             const response = await api.delete(url, config);
             return response;
         } finally {
-            config.loading?.(false);
+            handleLoading(config.loading, false);
         }
     }
 };
