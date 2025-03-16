@@ -192,7 +192,7 @@ app.get("/auth/google/callback",
         
         // Redirect to frontend with token
         const redirectURL = process.env.NODE_ENV === "production" 
-          ? `/auth/google/callback?token=${token}` 
+          ? `https://hokage-4027.onrender.com/auth/google/callback?token=${token}` 
           : `http://localhost:3000/auth/google/callback?token=${token}`;
         
         console.log("Google auth successful, redirecting to:", redirectURL);
