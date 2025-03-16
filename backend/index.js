@@ -103,7 +103,15 @@ app.post("/login", async (req, res) => {
     }
 });
 // // Google OAuth
-app.use(session({ secret: "secret", resave: false, saveUninitialized: true }));
+app.use(session({ 
+  secret: process.env.JWT_SECRET || "secret", 
+  resave: false, 
+  saveUninitialized: true,
+  cookie: {
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 
