@@ -13,7 +13,7 @@ export default function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5001/register", { name, email, password });
+      const response = await axios.post("https://hokage-4027.onrender.com/register", { name, email, password });
       alert("Registration Successful! Please login.");
       navigate("/login"); // Redirect to login page
     } catch (err) {
