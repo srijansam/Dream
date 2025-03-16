@@ -237,48 +237,61 @@ const fetchAndStoreAnime = async () => {
         let videos = [];
         const BASE_URL = "https://www.googleapis.com/youtube/v3/search";
         const MAX_VIDEOS = 50; // Reduced for faster loading and to avoid quota issues
+        const MAX_RETRIES = 3;
 
         while (videos.length < MAX_VIDEOS) {
-            console.log(`Fetching YouTube data with token: ${nextPageToken || 'initial'}`);
-            try {
-                const response = await axios.get(BASE_URL, {
-                    params: {
-                        key: process.env.YOUTUBE_API_KEY,
-                        channelId: "UCP8E_gJhRMApuQYOQ21MkLA",
-                        part: "snippet",
-                        type: "video",
-                        maxResults: 50,
-                        pageToken: nextPageToken
-                    },
-                    timeout: 10000 // 10 second timeout
-                });
+            let retryCount = 0;
+            let success = false;
 
-                if (!response.data.items || response.data.items.length === 0) {
-                    console.log("No videos found in response");
-                    break;
-                }
+            while (retryCount < MAX_RETRIES && !success) {
+                try {
+                    console.log(`Fetching YouTube data with token: ${nextPageToken || 'initial'} (Attempt ${retryCount + 1})`);
+                    const response = await axios.get(BASE_URL, {
+                        params: {
+                            key: process.env.YOUTUBE_API_KEY,
+                            channelId: "UCP8E_gJhRMApuQYOQ21MkLA",
+                            part: "snippet",
+                            type: "video",
+                            maxResults: 50,
+                            pageToken: nextPageToken
+                        },
+                        timeout: 10000 // 10 second timeout
+                    });
 
-                const newVideos = response.data.items.map(video => ({
-                    title: video.snippet.title,
-                    description: video.snippet.description,
-                    youtubeEmbedUrl: `https://www.youtube.com/embed/${video.id.videoId}`
-                }));
-                
-                videos.push(...newVideos);
-                console.log(`Fetched ${videos.length} videos so far...`);
-                
-                nextPageToken = response.data.nextPageToken;
-                if (!nextPageToken) {
-                    console.log("No next page token, ending fetch");
-                    break;
+                    if (!response.data.items || response.data.items.length === 0) {
+                        console.log("No videos found in response");
+                        break;
+                    }
+
+                    const newVideos = response.data.items.map(video => ({
+                        title: video.snippet.title,
+                        description: video.snippet.description,
+                        youtubeEmbedUrl: `https://www.youtube.com/embed/${video.id.videoId}`
+                    }));
+                    
+                    videos.push(...newVideos);
+                    console.log(`Fetched ${videos.length} videos so far...`);
+                    
+                    nextPageToken = response.data.nextPageToken;
+                    success = true;
+                    
+                    if (!nextPageToken) {
+                        console.log("No next page token, ending fetch");
+                        break;
+                    }
+                } catch (apiError) {
+                    retryCount++;
+                    console.error(`Attempt ${retryCount} failed:`, apiError.message);
+                    if (retryCount === MAX_RETRIES) {
+                        console.error("Max retries reached, stopping fetch");
+                        break;
+                    }
+                    // Wait before retrying
+                    await new Promise(resolve => setTimeout(resolve, 2000 * retryCount));
                 }
-            } catch (apiError) {
-                console.error("Error in YouTube API request:", apiError.message);
-                if (apiError.response) {
-                    console.error("YouTube API error details:", apiError.response.data);
-                }
-                break;
             }
+
+            if (!success) break;
         }
 
         if (videos.length > 0) {
@@ -291,18 +304,52 @@ const fetchAndStoreAnime = async () => {
         }
     } catch (err) {
         console.error("Error fetching YouTube data:", err);
+        throw err; // Propagate error for handling by caller
     }
 };
 
-setInterval(fetchAndStoreAnime, 24 * 60 * 60 * 1000);
-fetchAndStoreAnime();
+// Initial startup check for anime data
+(async () => {
+    try {
+        const count = await Anime.countDocuments();
+        if (count === 0) {
+            console.log("No anime data found on startup, initiating initial fetch...");
+            await fetchAndStoreAnime();
+        } else {
+            console.log(`Found ${count} existing anime entries`);
+        }
+    } catch (err) {
+        console.error("Error during startup anime check:", err);
+    }
+})();
 
-// Get all anime
+// Add manual refresh endpoint
+app.get("/refresh-anime", async (req, res) => {
+    try {
+        console.log("Manual refresh of anime data initiated");
+        await fetchAndStoreAnime();
+        res.json({ message: "Anime data refresh completed" });
+    } catch (err) {
+        console.error("Error in manual refresh:", err);
+        res.status(500).json({ message: "Error refreshing anime data", error: err });
+    }
+});
+
+// Get all anime with auto-fetch if empty
 app.get("/anime", async (req, res) => {
     try {
-        const animeList = await Anime.find();
+        let animeList = await Anime.find();
+        
+        // If no anime data exists, fetch it first
+        if (!animeList || animeList.length === 0) {
+            console.log("No anime data found, initiating fetch...");
+            await fetchAndStoreAnime();
+            animeList = await Anime.find();
+        }
+        
         res.json(animeList);
     } catch (err) {
+        console.error("Error in /anime route:", err);
         res.status(500).json({ message: "Error fetching anime", error: err });
     }
 });

@@ -62,7 +62,7 @@ const Sidebar = () => {
                 <button className="close-btn" onClick={toggleSidebar}>×</button>
                 <ul className="list-unstyled mt-4">
                     <li className="mb-3"><Link to="/home" className="sidebar-link">🏠 Dashboard</Link></li>
-                    <li className="mb-3"><a href="#" className="sidebar-link">👤 Profile</a></li>
+                    {/* <li className="mb-3"><a href="#" className="sidebar-link">👤 Profile</a></li> */}
                     <li className="mb-3"><Link to="/favourite-anime" className="sidebar-link">❤️ Favorites</Link></li>
                     <li className="mb-3"><Link to="/watch-later" className="sidebar-link">⏳ Watch Later</Link></li>
                     <li className="mb-3"><Link to="/settings" className="sidebar-link">⚙ Settings</Link></li>
