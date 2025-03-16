@@ -17,7 +17,7 @@ app.use(express.json());
 // CORS configuration
 const corsOptions = {
     origin: process.env.NODE_ENV === "production" 
-        ? process.env.FRONTEND_URL || "https://your-production-domain.com"
+        ? process.env.FRONTEND_URL || "https://hokage-4027.onrender.com"
         : "http://localhost:3000",
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -225,7 +225,7 @@ const authenticateToken = (req, res, next) => {
 // Fetch and store anime from YouTube
 const fetchAndStoreAnime = async () => {
     try {
-        console.log("Fetching YouTube data...");
+        console.log("Starting YouTube data fetch...");
         
         // Check if YouTube API key is available
         if (!process.env.YOUTUBE_API_KEY) {
