@@ -112,17 +112,31 @@ const callbackURL = process.env.NODE_ENV === "production"
   ? `${process.env.CALLBACK_URL}/auth/google/callback` 
   : "http://localhost:5001/auth/google/callback";
 
+console.log("Google OAuth callback URL:", callbackURL);
+
 passport.use(new passportGoogle({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: callbackURL
+    callbackURL: callbackURL,
+    userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
 }, async (accessToken, refreshToken, profile, done) => {
-    let user = await User.findOne({ googleId: profile.id });
-    if (!user) {
-        user = new User({ name: profile.displayName, email: profile.emails[0].value, googleId: profile.id });
-        await user.save();
+    try {
+        console.log("Google profile received:", profile.id, profile.displayName);
+        let user = await User.findOne({ googleId: profile.id });
+        if (!user) {
+            console.log("Creating new user for Google account");
+            user = new User({ 
+                name: profile.displayName, 
+                email: profile.emails[0].value, 
+                googleId: profile.id 
+            });
+            await user.save();
+        }
+        return done(null, user);
+    } catch (error) {
+        console.error("Error in Google authentication:", error);
+        return done(error, null);
     }
-    return done(null, user);
 }));
 
 passport.serializeUser((user, done) => done(null, user.id));
@@ -131,17 +145,44 @@ passport.deserializeUser(async (id, done) => {
     done(null, user);
 });
 
-app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+app.get("/auth/google", passport.authenticate("google", { 
+  scope: ["profile", "email"],
+  prompt: "select_account"
+}));
 
-app.get("/auth/google/callback", passport.authenticate("google", { failureRedirect: "/" }), (req, res) => {
-    // Generate JWT token for Google authenticated user
-    const token = jwt.sign({ userId: req.user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-    // Redirect to frontend with token
-    const redirectURL = process.env.NODE_ENV === "production" 
-      ? `/auth/google/callback?token=${token}` 
-      : `http://localhost:3000/auth/google/callback?token=${token}`;
-    res.redirect(redirectURL);
-});
+app.get("/auth/google/callback", 
+  function(req, res, next) {
+    passport.authenticate("google", function(err, user, info) {
+      if (err) {
+        console.error("Google auth error:", err);
+        return res.redirect("/?error=google_auth_error");
+      }
+      
+      if (!user) {
+        console.error("Google auth failed, no user:", info);
+        return res.redirect("/?error=google_auth_failed");
+      }
+      
+      req.logIn(user, function(err) {
+        if (err) {
+          console.error("Login error:", err);
+          return res.redirect("/?error=login_error");
+        }
+        
+        // Generate JWT token for Google authenticated user
+        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+        
+        // Redirect to frontend with token
+        const redirectURL = process.env.NODE_ENV === "production" 
+          ? `/auth/google/callback?token=${token}` 
+          : `http://localhost:3000/auth/google/callback?token=${token}`;
+        
+        console.log("Google auth successful, redirecting to:", redirectURL);
+        return res.redirect(redirectURL);
+      });
+    })(req, res, next);
+  }
+);
 
 /////auth token
 const authenticateToken = (req, res, next) => {

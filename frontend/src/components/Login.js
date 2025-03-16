@@ -31,7 +31,13 @@ export default function Login() {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = "/auth/google";
+    // For production, use the relative URL; for development, use the full URL
+    const googleAuthUrl = process.env.NODE_ENV === 'production' 
+      ? '/auth/google' 
+      : 'http://localhost:5001/auth/google';
+    
+    console.log('Redirecting to Google auth:', googleAuthUrl);
+    window.location.href = googleAuthUrl;
   };
   
   // Open forgot password modal
