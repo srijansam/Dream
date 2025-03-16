@@ -284,6 +284,7 @@ const fetchAndStoreAnime = async () => {
                     console.log("Making API request with params:", {
                         channelId: params.channelId,
                         type: params.type,
+                        part: params.part,
                         maxResults: params.maxResults,
                         order: params.order
                     });
