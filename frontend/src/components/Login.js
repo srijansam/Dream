@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useEffect} from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
 import api from "../utils/api";
@@ -38,7 +38,15 @@ export default function Login() {
       : 'http://localhost:5001/auth/google';
     window.location.href = googleAuthUrl;
   };
-  
+   // ✅ Capture token after Google redirect
+   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    if (token) {
+      localStorage.setItem("token", token);
+      navigate("/home");
+    }
+  }, [navigate]);
   // Open forgot password modal
   const openForgotPassword = () => {
     setShowForgotPassword(true);
