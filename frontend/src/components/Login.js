@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
 import api from "../utils/api";
 
 export default function Login() {
@@ -9,7 +8,6 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const navigate = useNavigate();
-  const { login } = useAuth();
   
   // States for forgot password flow
   const [showForgotPassword, setShowForgotPassword] = useState(false);
@@ -27,14 +25,15 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      const result = await login(email, password);
-      if (result.success) {
+      const response = await api.post("/login", { email, password });
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
         navigate("/home");
       } else {
-        setLoginError(result.error || "Login failed");
+        setLoginError("Login failed");
       }
     } catch (error) {
-      setLoginError(error.message || "An unexpected error occurred");
+      setLoginError(error.response?.data?.message || "An unexpected error occurred");
     } finally {
       setIsLoading(false);
     }
