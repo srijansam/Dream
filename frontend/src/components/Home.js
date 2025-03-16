@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import Navbar from "./Navbar";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { jwtDecode } from "jwt-decode";  
@@ -14,12 +14,13 @@ export default function Home() {
     const [userId, setUserId] = useState(null);
 
     useEffect(() => {
-        axios.get("http://localhost:5001/anime")
+        api.get("/anime")
             .then(res => {
                 setAnimeList(res.data);
                 setLoading(false);
             })
-            .catch(() => {
+            .catch((err) => {
+                console.error("Error loading anime:", err);
                 setError("Failed to load anime. Please try again later.");
                 setLoading(false);
             });
@@ -32,20 +33,14 @@ export default function Home() {
                 setUserId(decoded.userId);
 
                 // Fetch favorite animes
-                axios.get("http://localhost:5001/favourite_anime", { 
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    },
+                api.get("/favourite_anime", { 
                     params: { userId: decoded.userId } 
                 })
                     .then(res => setFavorites(new Set(res.data.map(anime => anime._id))))
                     .catch(err => console.error("Error fetching favorites:", err));
 
                 // Fetch watch later animes
-                axios.get("http://localhost:5001/watch_later", { 
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    },
+                api.get("/watch_later", { 
                     params: { userId: decoded.userId } 
                 })
                     .then(res => setWatchLater(new Set(res.data.map(anime => anime._id))))
@@ -69,22 +64,18 @@ export default function Home() {
 
         try {
             if (isFavorited) {
-                await axios.delete(`http://localhost:5001/favourite_anime/${anime._id}`, { 
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    },
+                await api.delete(`/favourite_anime/${anime._id}`, { 
                     data: { userId } 
                 });
                 updatedFavorites.delete(anime._id);
             } else {
-                await axios.post("http://localhost:5001/favourite_anime", 
-                    { userId, animeId: anime._id, title: anime.title, description: anime.description, youtubeEmbedUrl: anime.youtubeEmbedUrl },
-                    { 
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    }
-                );
+                await api.post("/favourite_anime", { 
+                    userId, 
+                    animeId: anime._id, 
+                    title: anime.title, 
+                    description: anime.description, 
+                    youtubeEmbedUrl: anime.youtubeEmbedUrl 
+                });
                 updatedFavorites.add(anime._id);
             }
             setFavorites(new Set(updatedFavorites));
@@ -105,22 +96,18 @@ export default function Home() {
 
         try {
             if (isInWatchLater) {
-                await axios.delete(`http://localhost:5001/watch_later/${anime._id}`, { 
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    },
+                await api.delete(`/watch_later/${anime._id}`, { 
                     data: { userId } 
                 });
                 updatedWatchLater.delete(anime._id);
             } else {
-                await axios.post("http://localhost:5001/watch_later", 
-                    { userId, animeId: anime._id, title: anime.title, description: anime.description, youtubeEmbedUrl: anime.youtubeEmbedUrl },
-                    { 
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    }
-                );
+                await api.post("/watch_later", { 
+                    userId, 
+                    animeId: anime._id, 
+                    title: anime.title, 
+                    description: anime.description, 
+                    youtubeEmbedUrl: anime.youtubeEmbedUrl 
+                });
                 updatedWatchLater.add(anime._id);
             }
             setWatchLater(new Set(updatedWatchLater));

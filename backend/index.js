@@ -13,9 +13,28 @@ require("dotenv").config();
 
 const app = express();
 app.use(express.json());
-app.use(cors({
-    origin: process.env.NODE_ENV === "production" ? false : "http://localhost:3000",
-    credentials: true
+
+// CORS configuration
+const corsOptions = {
+    origin: process.env.NODE_ENV === "production" 
+        ? process.env.FRONTEND_URL || "https://your-production-domain.com"
+        : "http://localhost:3000",
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+};
+app.use(cors(corsOptions));
+
+// Session configuration
+app.use(session({ 
+    secret: process.env.JWT_SECRET || "secret", 
+    resave: false, 
+    saveUninitialized: false,
+    cookie: {
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax'
+    }
 }));
 
 // Serve static files from the React frontend app in production
@@ -103,15 +122,6 @@ app.post("/login", async (req, res) => {
     }
 });
 // // Google OAuth
-app.use(session({ 
-  secret: process.env.JWT_SECRET || "secret", 
-  resave: false, 
-  saveUninitialized: true,
-  cookie: {
-    secure: process.env.NODE_ENV === "production",
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
-  }
-}));
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -369,31 +379,67 @@ app.delete("/watch_later/:animeId", authenticateToken, async (req, res) => {
 app.get("/user", async (req, res) => {
     try {
         let user = null;
+        let authMethod = null;
 
-        // 🔹 Check if user is authenticated via Google OAuth (session-based)
+        // Check if user is authenticated via Google OAuth (session-based)
         if (req.isAuthenticated()) {
-            console.log("Google OAuth User:", req.user); // Debugging
+            console.log("User authenticated via Google OAuth");
             user = req.user;
+            authMethod = 'google';
         }
-        
-        // 🔹 Check JWT token for regular login users
+        // Check JWT token for regular login users
         else {
-            const token = req.headers.authorization?.split(" ")[1]; // Extract JWT token
-            if (!token) return res.status(401).json({ message: "Unauthorized" });
+            const token = req.headers.authorization?.split(" ")[1];
+            if (!token) {
+                console.log("No token provided");
+                return res.status(401).json({ 
+                    message: "Authentication required", 
+                    details: "No authentication token provided" 
+                });
+            }
 
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            user = await User.findById(decoded.userId);
+            try {
+                const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                user = await User.findById(decoded.userId);
+                authMethod = 'jwt';
+                console.log("User authenticated via JWT");
+            } catch (error) {
+                console.error("JWT verification error:", error.message);
+                return res.status(401).json({ 
+                    message: "Invalid or expired token", 
+                    details: error.message 
+                });
+            }
         }
 
-        if (!user) return res.status(404).json({ message: "User not found" });
+        if (!user) {
+            console.log("User not found in database");
+            return res.status(404).json({ 
+                message: "User not found", 
+                details: "The user associated with this token no longer exists" 
+            });
+        }
+
+        // Log successful authentication
+        console.log(`User authenticated successfully via ${authMethod}:`, {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            isGoogleUser: !!user.googleId
+        });
 
         res.json({ 
             name: user.name, 
             email: user.email,
-            googleId: user.googleId || null
+            googleId: user.googleId || null,
+            authMethod
         });
     } catch (error) {
-        res.status(401).json({ message: "Invalid token or session expired", error: error.message });
+        console.error("Unexpected error in /user route:", error);
+        res.status(500).json({ 
+            message: "Server error", 
+            details: error.message 
+        });
     }
 });
 

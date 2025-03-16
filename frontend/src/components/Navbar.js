@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import Sidebar from "./Sidebar";
 import ThemeToggle from "./ThemeToggle";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -10,17 +10,23 @@ const Navbar = ({ setSearchQuery }) => {
 
     useEffect(() => {
         const token = localStorage.getItem("token");
+        if (!token) {
+            setUser(null);
+            return;
+        }
 
-        axios.get("http://localhost:5001/user", {
-            headers: token ? { Authorization: `Bearer ${token}` } : {},
-            withCredentials: true
-        })
-        .then(response => {
-            setUser(response.data);
-        })
-        .catch(error => {
-            console.error("Error fetching user data:", error.message);
-        });
+        api.get("/user")
+            .then(response => {
+                setUser(response.data);
+            })
+            .catch(error => {
+                console.error("Error fetching user data:", error.message);
+                setUser(null);
+                // If we get a 401/403 error, the token is invalid/expired
+                if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+                    localStorage.removeItem("token");
+                }
+            });
     }, []);
 
     const handleSearch = (e) => {
@@ -31,7 +37,7 @@ const Navbar = ({ setSearchQuery }) => {
     return (
         <nav className="navbar navbar-expand-lg">
             <div className="container-fluid">
-                <Sidebar />
+                <Sidebar user={user} />
                 <img src="/assets/kakashi_icon.png" alt="Kakashi Icon" style={{ width: "100px", height: "60px" }} />
                 <a className="navbar-brand fw-bold" href="#">HOKAGE</a>
 
