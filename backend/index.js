@@ -232,12 +232,36 @@ const fetchAndStoreAnime = async () => {
             console.error("YouTube API key is missing. Please set the YOUTUBE_API_KEY environment variable.");
             return;
         }
+
+        const CHANNEL_ID = "UCP8E_gJhRMApuQYOQ21MkLA";
+        console.log("Using channel ID:", CHANNEL_ID);
         
         let nextPageToken = "";
         let videos = [];
         const BASE_URL = "https://www.googleapis.com/youtube/v3/search";
-        const MAX_VIDEOS = 50; // Reduced for faster loading and to avoid quota issues
+        const MAX_VIDEOS = 50;
         const MAX_RETRIES = 3;
+
+        // First, verify the channel exists
+        try {
+            const channelResponse = await axios.get('https://www.googleapis.com/youtube/v3/channels', {
+                params: {
+                    key: process.env.YOUTUBE_API_KEY,
+                    id: CHANNEL_ID,
+                    part: 'snippet'
+                }
+            });
+            
+            if (!channelResponse.data.items || channelResponse.data.items.length === 0) {
+                console.error("Channel not found. Please verify the channel ID.");
+                return;
+            }
+            
+            console.log("Channel found:", channelResponse.data.items[0].snippet.title);
+        } catch (channelError) {
+            console.error("Error verifying channel:", channelError.response?.data || channelError.message);
+            return;
+        }
 
         while (videos.length < MAX_VIDEOS) {
             let retryCount = 0;
@@ -246,31 +270,46 @@ const fetchAndStoreAnime = async () => {
             while (retryCount < MAX_RETRIES && !success) {
                 try {
                     console.log(`Fetching YouTube data with token: ${nextPageToken || 'initial'} (Attempt ${retryCount + 1})`);
+                    
+                    const params = {
+                        key: process.env.YOUTUBE_API_KEY,
+                        channelId: CHANNEL_ID,
+                        part: "snippet",
+                        type: "video",
+                        maxResults: 50,
+                        pageToken: nextPageToken || undefined,
+                        order: "date"  // Get most recent videos first
+                    };
+
+                    console.log("Making API request with params:", {
+                        channelId: params.channelId,
+                        type: params.type,
+                        maxResults: params.maxResults,
+                        order: params.order
+                    });
+                    
                     const response = await axios.get(BASE_URL, {
-                        params: {
-                            key: process.env.YOUTUBE_API_KEY,
-                            channelId: "UCP8E_gJhRMApuQYOQ21MkLA",
-                            part: "snippet",
-                            type: "video",
-                            maxResults: 50,
-                            pageToken: nextPageToken
-                        },
-                        timeout: 10000 // 10 second timeout
+                        params,
+                        timeout: 10000
                     });
 
                     if (!response.data.items || response.data.items.length === 0) {
                         console.log("No videos found in response");
+                        if (response.data.error) {
+                            console.error("API Error:", response.data.error);
+                        }
                         break;
                     }
 
                     const newVideos = response.data.items.map(video => ({
                         title: video.snippet.title,
                         description: video.snippet.description,
-                        youtubeEmbedUrl: `https://www.youtube.com/embed/${video.id.videoId}`
+                        youtubeEmbedUrl: `https://www.youtube.com/embed/${video.id.videoId}`,
+                        thumbnailUrl: video.snippet.thumbnails?.high?.url || video.snippet.thumbnails?.default?.url
                     }));
                     
                     videos.push(...newVideos);
-                    console.log(`Fetched ${videos.length} videos so far...`);
+                    console.log(`Fetched ${newVideos.length} new videos. Total videos: ${videos.length}`);
                     
                     nextPageToken = response.data.nextPageToken;
                     success = true;
@@ -281,12 +320,16 @@ const fetchAndStoreAnime = async () => {
                     }
                 } catch (apiError) {
                     retryCount++;
-                    console.error(`Attempt ${retryCount} failed:`, apiError.message);
+                    if (apiError.response?.data?.error?.errors) {
+                        console.error("YouTube API Error:", apiError.response.data.error.errors);
+                    } else {
+                        console.error(`Attempt ${retryCount} failed:`, apiError.message);
+                    }
+                    
                     if (retryCount === MAX_RETRIES) {
                         console.error("Max retries reached, stopping fetch");
                         break;
                     }
-                    // Wait before retrying
                     await new Promise(resolve => setTimeout(resolve, 2000 * retryCount));
                 }
             }
@@ -300,11 +343,18 @@ const fetchAndStoreAnime = async () => {
             await Anime.insertMany(videos);
             console.log(`YouTube data stored successfully! Total videos: ${videos.length}`);
         } else {
-            console.error("No videos were fetched from YouTube API");
+            console.error("No videos were fetched from YouTube API. Please check:");
+            console.error("1. YouTube API key is valid");
+            console.error("2. Channel ID is correct");
+            console.error("3. API quota is not exhausted");
+            console.error("4. Channel has public videos");
         }
     } catch (err) {
         console.error("Error fetching YouTube data:", err);
-        throw err; // Propagate error for handling by caller
+        if (err.response?.data?.error) {
+            console.error("YouTube API Error Details:", err.response.data.error);
+        }
+        throw err;
     }
 };
 
