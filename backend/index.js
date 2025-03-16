@@ -277,8 +277,8 @@ const fetchAndStoreAnime = async () => {
                         part: "snippet",
                         type: "video",
                         maxResults: 50,
-                        pageToken: nextPageToken || undefined,
-                        order: "date"  // Get most recent videos first
+                        order: "date",
+                        ...(nextPageToken ? { pageToken: nextPageToken } : {})
                     };
 
                     console.log("Making API request with params:", {
