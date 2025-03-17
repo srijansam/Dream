@@ -173,39 +173,63 @@ app.get("/auth/google", passport.authenticate("google", {
   prompt: "select_account"
 }));
 
+// app.get("/auth/google/callback", 
+//   function(req, res, next) {
+//     passport.authenticate("google", function(err, user, info) {
+//       if (err) {
+//         console.error("Google auth error:", err);
+//         return res.redirect("/?error=google_auth_error");
+//       }
+      
+//       if (!user) {
+//         console.error("Google auth failed, no user:", info);
+//         return res.redirect("/?error=google_auth_failed");
+//       }
+      
+//       req.logIn(user, function(err) {
+//         if (err) {
+//           console.error("Login error:", err);
+//           return res.redirect("/?error=login_error");
+//         }
+        
+//         // Generate JWT token for Google authenticated user
+//         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+        
+//         // Redirect to frontend with token
+//         const redirectURL = process.env.NODE_ENV === "production" 
+//           ? `https://hokage-4027.onrender.com/auth/google/callback?token=${token}` 
+//           : `http://localhost:3000/auth/google/callback?token=${token}`;
+        
+//         console.log("Google auth successful, redirecting to:", redirectURL);
+//         return res.redirect(redirectURL);
+//       });
+//     })(req, res, next);
+//   }
+// );
 app.get("/auth/google/callback", 
-  function(req, res, next) {
-    passport.authenticate("google", function(err, user, info) {
-      if (err) {
-        console.error("Google auth error:", err);
-        return res.redirect("/?error=google_auth_error");
-      }
-      
-      if (!user) {
-        console.error("Google auth failed, no user:", info);
-        return res.redirect("/?error=google_auth_failed");
-      }
-      
-      req.logIn(user, function(err) {
-        if (err) {
-          console.error("Login error:", err);
-          return res.redirect("/?error=login_error");
+    passport.authenticate("google", { 
+        failureRedirect: "/?error=google_auth_failed" 
+    }), 
+    (req, res) => {
+        try {
+            // Generate JWT token for Google authenticated user
+            const token = jwt.sign({ userId: req.user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+            // Redirect to frontend with token
+            const redirectURL = process.env.NODE_ENV === "production" 
+                ? `https://hokage-4027.onrender.com/auth/google/callback?token=${token}` 
+                : `http://localhost:3000/auth/google/callback?token=${token}`;
+
+            console.log("Google auth successful, redirecting to:", redirectURL);
+            return res.redirect(redirectURL);
+
+        } catch (err) {
+            console.error("JWT generation or redirection error:", err);
+            return res.redirect("/?error=token_error");
         }
-        
-        // Generate JWT token for Google authenticated user
-        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-        
-        // Redirect to frontend with token
-        const redirectURL = process.env.NODE_ENV === "production" 
-          ? `https://hokage-4027.onrender.com/auth/google/callback?token=${token}` 
-          : `http://localhost:3000/auth/google/callback?token=${token}`;
-        
-        console.log("Google auth successful, redirecting to:", redirectURL);
-        return res.redirect(redirectURL);
-      });
-    })(req, res, next);
-  }
+    }
 );
+
 
 /////auth token
 const authenticateToken = (req, res, next) => {
