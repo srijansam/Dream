@@ -164,7 +164,12 @@ passport.deserializeUser(async (id, done) => {
 });
 
 app.get("/auth/google", passport.authenticate("google", { 
-  scope: ["profile", "email"],
+    scope: [
+        "profile", 
+        "email", 
+        "https://www.googleapis.com/auth/youtube.readonly"
+      ],
+      
   prompt: "select_account"
 }));
 
