@@ -9,7 +9,7 @@ export default function Home() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        axios.get("https://hokage-4027.onrender.com/anime")
+        axios.get("https://hokagee.onrender.com/anime")
             .then(res => {
                 console.log("Fetched Anime Data:", res.data);
                 setAnimeList(res.data);
