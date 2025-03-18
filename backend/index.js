@@ -38,9 +38,24 @@ app.use(session({
 }));
 
 // Serve static files from the React frontend app in production
+// if (process.env.NODE_ENV === "production") {
+//     app.use(express.static(path.join(__dirname, "../frontend/build")));
+// }
 if (process.env.NODE_ENV === "production") {
-    app.use(express.static(path.join(__dirname, "../frontend/build")));
+    // Exclude /auth routes from static serving
+    app.use((req, res, next) => {
+        if (req.url.startsWith('/auth/')) {
+            return next(); // Allow backend to handle /auth routes (e.g., /auth/google)
+        }
+        express.static(path.join(__dirname, "../frontend/build"))(req, res, next);
+    });
+
+    // React handles all other routes
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, "../frontend/build", "index.html"));
+    });
 }
+
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
@@ -173,39 +188,7 @@ app.get("/auth/google", passport.authenticate("google", {
   prompt: "select_account"
 }));
 
-// app.get("/auth/google/callback", 
-//   function(req, res, next) {
-//     passport.authenticate("google", function(err, user, info) {
-//       if (err) {
-//         console.error("Google auth error:", err);
-//         return res.redirect("/?error=google_auth_error");
-//       }
-      
-//       if (!user) {
-//         console.error("Google auth failed, no user:", info);
-//         return res.redirect("/?error=google_auth_failed");
-//       }
-      
-//       req.logIn(user, function(err) {
-//         if (err) {
-//           console.error("Login error:", err);
-//           return res.redirect("/?error=login_error");
-//         }
-        
-//         // Generate JWT token for Google authenticated user
-//         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-        
-//         // Redirect to frontend with token
-//         const redirectURL = process.env.NODE_ENV === "production" 
-//           ? `https://hokage-4027.onrender.com/auth/google/callback?token=${token}` 
-//           : `http://localhost:3000/auth/google/callback?token=${token}`;
-        
-//         console.log("Google auth successful, redirecting to:", redirectURL);
-//         return res.redirect(redirectURL);
-//       });
-//     })(req, res, next);
-//   }
-// );
+
 app.get("/auth/google/callback", 
     passport.authenticate("google", { 
         failureRedirect: "/?error=google_auth_failed" 
@@ -266,7 +249,7 @@ const fetchAndStoreAnime = async () => {
         let nextPageToken = "";
         let videos = [];
         const BASE_URL = "https://www.googleapis.com/youtube/v3/search";
-        const MAX_VIDEOS = 50;
+        const MAX_VIDEOS = 250;
         const MAX_RETRIES = 3;
 
         // First, verify the channel exists
