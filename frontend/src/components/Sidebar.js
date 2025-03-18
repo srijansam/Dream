@@ -16,7 +16,7 @@ const Sidebar = () => {
 
     const handleLogout = async () => {
         try {
-            await axios.get("https://hokage-4027.onrender.com/logout", { withCredentials: true });
+            await axios.get("https://hokagee.onrender.com/logout", { withCredentials: true });
             localStorage.removeItem("token"); // Remove JWT token
             setUser(null); // Reset user state
             navigate("/homewithoutlogin"); // Redirect after logout
@@ -32,7 +32,7 @@ const Sidebar = () => {
         const fetchUser = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const response = await axios.get("https://hokage-4027.onrender.com/user", {
+                const response = await axios.get("https://hokagee.onrender.com/user", {
                     headers: token ? { Authorization: `Bearer ${token}` } : {},
                     withCredentials: true // Ensure session cookies are sent
                 });

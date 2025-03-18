@@ -34,7 +34,7 @@ export default function Login() {
 
   const handleGoogleLogin = () => {
     const googleAuthUrl = process.env.NODE_ENV === 'production' 
-      ? 'https://hokage-4027.onrender.com/auth/google' 
+      ? 'https://hokagee.onrender.com/auth/google' 
       : 'http://localhost:5001/auth/google';
     window.location.href = googleAuthUrl;
   };

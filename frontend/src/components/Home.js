@@ -14,7 +14,7 @@ export default function Home() {
     const [userId, setUserId] = useState(null);
 
     useEffect(() => {
-        api.get("https://hokage-4027.onrender.com/anime")
+        api.get("https://hokagee.onrender.com/anime")
             .then(res => {
                 setAnimeList(res.data);
                 setLoading(false);

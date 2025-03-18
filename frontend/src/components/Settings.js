@@ -33,7 +33,7 @@ const Settings = () => {
                 setUser({ userId: decoded.userId });
                 
                 // Fetch user details to check if they're a Google user
-                axios.get("https://hokage-4027.onrender.com1/user", {
+                axios.get("https://hokagee.onrender.com/user", {
                     headers: { Authorization: `Bearer ${token}` },
                     withCredentials: true
                 })
@@ -124,7 +124,7 @@ const Settings = () => {
         }
         
         // Send password change request to backend
-        axios.post("https://hokage-4027.onrender.com/change-password", 
+        axios.post("https://hokagee.onrender.com/change-password", 
             {
                 currentPassword: passwordData.currentPassword,
                 newPassword: passwordData.newPassword

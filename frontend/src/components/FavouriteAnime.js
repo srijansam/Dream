@@ -15,7 +15,7 @@ export default function FavouriteAnime() {
         if (token) {
             try {
                 const decoded = jwtDecode(token);
-                axios.get("https://hokage-4027.onrender.com/favourite_anime", {
+                axios.get("https://hokagee.onrender.com/favourite_anime", {
                     headers: { Authorization: `Bearer ${token}` },
                     params: { userId: decoded.userId },
                 })
@@ -45,7 +45,7 @@ export default function FavouriteAnime() {
         try {
             const decoded = jwtDecode(token);
             if (favorites.has(anime._id)) {
-                await axios.delete(`https://hokage-4027.onrender.com/favourite_anime/${anime._id}`, {
+                await axios.delete(`https://hokagee.onrender.com/favourite_anime/${anime._id}`, {
                     headers: { Authorization: `Bearer ${token}` },
                     data: { userId: decoded.userId }
                 });

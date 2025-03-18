@@ -17,7 +17,7 @@ export default function WatchLater() {
                 const decoded = jwtDecode(token);
                 console.log("Fetching watch later anime for user:", decoded.userId);
 
-                axios.get("http://localhost:5001/watch_later", {
+                axios.get("https://hokagee.onrender.com/watch_later", {
                     headers: { Authorization: `Bearer ${token}` },
                     params: { userId: decoded.userId }
                 })
@@ -52,7 +52,7 @@ export default function WatchLater() {
 
         try {
             const decoded = jwtDecode(token);
-            await axios.delete(`http://localhost:5001/watch_later/${anime._id}`, {
+            await axios.delete(`https://hokagee.onrender.com/watch_later/${anime._id}`, {
                 headers: { Authorization: `Bearer ${token}` },
                 data: { userId: decoded.userId }
             });
