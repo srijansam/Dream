@@ -17,7 +17,7 @@ app.use(express.json());
 // CORS configuration
 const corsOptions = {
     origin: process.env.NODE_ENV === "production" 
-        ? process.env.FRONTEND_URL || "https://hokage-4027.onrender.com"
+        ? process.env.FRONTEND_URL || "https://hokagee.onrender.com"
         : "http://localhost:3000",
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -217,7 +217,7 @@ app.get("/auth/google/callback",
 
             // Redirect to frontend with token
             const redirectURL = process.env.NODE_ENV === "production" 
-                ? `https://hokage-4027.onrender.com/auth/google/callback?token=${token}` 
+                ? `https://hokagee.onrender.com/auth/google/callback?token=${token}` 
                 : `http://localhost:3000/auth/google/callback?token=${token}`;
 
             console.log("Google auth successful, redirecting to:", redirectURL);
