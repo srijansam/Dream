@@ -15,18 +15,26 @@ try {
     const path = require('path');
     
     const app = express();
-    const PORT = process.env.PORT || 3000;
+    const PORT = process.env.PORT || 5001;
     
-    // Serve static files from the React frontend app
-    app.use(express.static(path.join(__dirname, 'frontend/build')));
-    
-    // Handle React routing, return all requests to React app
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(__dirname, 'frontend/build', 'index.html'));
-    });
+    // Serve static files from the frontend build directory if it exists
+    if (process.env.NODE_ENV === 'production') {
+      console.log('Attempting to serve static files from frontend/build...');
+      app.use(express.static(path.join(__dirname, 'frontend/build')));
+      
+      // Serve the React app for any other routes
+      app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, 'frontend/build', 'index.html'));
+      });
+    } else {
+      // Simple response for development
+      app.get('/', (req, res) => {
+        res.send('Server is running in development mode. Please check the logs for errors.');
+      });
+    }
     
     app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
+      console.log(`Fallback server running on port ${PORT}`);
     });
   } catch (fallbackError) {
     console.error('Failed to start fallback server:', fallbackError);
