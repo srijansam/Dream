@@ -38,24 +38,9 @@ app.use(session({
 }));
 
 // Serve static files from the React frontend app in production
-// if (process.env.NODE_ENV === "production") {
-//     app.use(express.static(path.join(__dirname, "../frontend/build")));
-// }
 if (process.env.NODE_ENV === "production") {
-    // Exclude /auth routes from static serving
-    app.use((req, res, next) => {
-        if (req.url.startsWith('/auth/')) {
-            return next(); // Allow backend to handle /auth routes (e.g., /auth/google)
-        }
-        express.static(path.join(__dirname, "../frontend/build"))(req, res, next);
-    });
-
-    // React handles all other routes
-    app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname, "../frontend/build", "index.html"));
-    });
+    app.use(express.static(path.join(__dirname, "../frontend/build")));
 }
-
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
