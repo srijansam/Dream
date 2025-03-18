@@ -216,10 +216,12 @@ app.get("/auth/google/callback",
             const token = jwt.sign({ userId: req.user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
             // Redirect to frontend with token
+            // const redirectURL = process.env.NODE_ENV === "production" 
+            //     ? `https://hokagee.onrender.com/auth/google/callback?token=${token}` 
+            //     : `http://localhost:3000/auth/google/callback?token=${token}`;
             const redirectURL = process.env.NODE_ENV === "production" 
-                ? `https://hokagee.onrender.com/auth/google/callback?token=${token}` 
-                : `http://localhost:3000/auth/google/callback?token=${token}`;
-
+                ? `https://hokageanime.com/google-success?token=${token}` 
+                : `http://localhost:3000/google-success?token=${token}`;
             console.log("Google auth successful, redirecting to:", redirectURL);
             return res.redirect(redirectURL);
 
