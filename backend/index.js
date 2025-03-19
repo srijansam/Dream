@@ -165,13 +165,13 @@ passport.deserializeUser(async (id, done) => {
 
 app.get("/auth/google", passport.authenticate("google", { 
     scope: [
-        
+        "openid",
         "profile", 
         "email", 
         
       ],
       
-  //prompt: "select_account"
+  prompt: "select_account"
 }));
 
 
