@@ -21,7 +21,7 @@ const App = () => {
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/homeWithoutLogin" element={<HomeWithoutLogin />} />
-                    <Route path="/auth/google/callback" element={<GoogleCallback />} />
+                    <Route path="/google/callback" element={<GoogleCallback />} />
                     <Route path="/home" element={<Home />} />
                     <Route path="/favourite-anime" element={<FavouriteAnime />} />
                     <Route path="/watch-later" element={<WatchLater />} />
