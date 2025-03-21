@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- Homepage -->
+  <url>
+    <loc>https://hokagee.onrender.com/</loc>
+    <priority>1.0</priority>
+    <changefreq>daily</changefreq>
+  </url>
+
+  <!-- Login -->
+  <url>
+    <loc>https://hokagee.onrender.com/login</loc>
+    <priority>0.8</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+
+  <!-- Register -->
+  <url>
+    <loc>https://hokagee.onrender.com/register</loc>
+    <priority>0.8</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+
+  <!-- Favorites -->
+  <url>
+    <loc>https://hokagee.onrender.com/favorite-anime</loc>
+    <priority>0.7</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <!-- home withoutlogin -->
+  <url>
+    <loc>https://hokagee.onrender.com/homewithoutlogin</loc>
+    <priority>0.7</priority>
+    <changefreq>weekly</changefreq><loc></loc>
+  </url>
+  <!-- Watch Later -->
+  <url>
+    <loc>https://hokagee.onrender.com/watch-later</loc>
+    <priority>0.7</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+
+  <!-- Anime detail template (example entry) -->
+  <url>
+    <loc>https://hokagee.onrender.com/anime/one-piece</loc>
+    <priority>0.9</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+
+  <!-- Watch page template (example entry) -->
+  <url>
+    <loc>https://hokagee.onrender.com/watch/one-piece-episode-1</loc>
+    <priority>0.9</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+
+</urlset>
