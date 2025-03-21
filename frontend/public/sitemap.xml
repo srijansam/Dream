@@ -29,11 +29,11 @@
     <changefreq>weekly</changefreq>
   </url>
   <!-- home withoutlogin -->
-  <url>
-    <loc>https://hokagee.onrender.com/homewithoutlogin</loc>
-    <priority>0.7</priority>
-    <changefreq>weekly</changefreq><loc></loc>
-  </url>
+<url>
+  <loc>https://hokagee.onrender.com/homewithoutlogin</loc>
+  <priority>0.7</priority>
+  <changefreq>weekly</changefreq>
+</url>
   <!-- Watch Later -->
   <url>
     <loc>https://hokagee.onrender.com/watch-later</loc>
