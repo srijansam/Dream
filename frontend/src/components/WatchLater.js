@@ -9,7 +9,7 @@ export default function WatchLater() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [watchlater, setWatchLater] = useState(new Set());
-
+    const [searchQuery, setSearchQuery] = useState("");
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
@@ -68,10 +68,12 @@ export default function WatchLater() {
             console.error("Error removing anime from watchlist:", err);
         }
     };
-
+    const filteredAnime = watchLaterAnime.filter(anime =>
+        anime.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
     return (
         <>
-            <Navbar />
+            <Navbar setSearchQuery={setSearchQuery} />
             <div style={{ background: "linear-gradient(to bottom, #1a1f25, #0c1015)", minHeight: "100vh", color: "white", padding: "20px" }}>
                 <div className="container mt-4">
                     <h2 className="text-center mb-4">⏳ Watch Later</h2>
@@ -80,11 +82,11 @@ export default function WatchLater() {
                     {error && <h3 className="text-danger text-center">{error}</h3>}
 
                     <div className="row">
-                        {watchLaterAnime.length === 0 && !loading && (
+                        {filteredAnime.length === 0 && !loading && (
                             <h4 className="text-center text-secondary">No anime added to watch later.</h4>
                         )}
 
-                        {watchLaterAnime.map((anime) => (
+                        {filteredAnime.map((anime) => (
                             <div key={anime._id} className="col-md-4 mb-4">
                                 <div className="anime-card card shadow-sm">
                                     <div className="card-img-top" onClick={() => openFullscreen(anime.youtubeEmbedUrl)}>

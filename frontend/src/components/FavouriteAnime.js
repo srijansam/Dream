@@ -9,7 +9,7 @@ export default function FavouriteAnime() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [favorites, setFavorites] = useState(new Set());
-
+    const [searchQuery, setSearchQuery] = useState("");
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
@@ -60,10 +60,12 @@ export default function FavouriteAnime() {
             console.error("Error removing anime from favourites:", err);
         }
     };
-
+    const filteredAnime = favouriteAnime.filter(anime =>
+        anime.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
     return (
         <>
-            <Navbar />
+            <Navbar setSearchQuery={setSearchQuery} />
             <div style={{ background: "linear-gradient(to bottom, #1a1f25, #0c1015)", minHeight: "100vh", color: "white", padding: "20px" }}>
                 <div className="container mt-4">
                     <h2 className="text-center mb-4">❤️ Favourite Anime</h2>
@@ -72,11 +74,11 @@ export default function FavouriteAnime() {
                     {error && <h3 className="text-danger text-center">{error}</h3>}
 
                     <div className="row">
-                        {favouriteAnime.length === 0 && !loading && (
+                        {filteredAnime.length === 0 && !loading && (
                             <h4 className="text-center text-secondary">No favourite anime added yet.</h4>
                         )}
                         
-                        {favouriteAnime.map((anime) => (
+                        {filteredAnime.map((anime) => (
                             <div key={anime._id} className="col-md-4 mb-4">
                                 <div className="anime-card card shadow-sm position-relative">
                                     <div className="card-img-top" onClick={() => window.open(anime.youtubeEmbedUrl, "_blank", "fullscreen=yes")}> 
