@@ -11,6 +11,7 @@ import GoogleCallback from "./components/GoogleCallback";
 import Settings from "./components/Settings";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import "./styles/theme.css";
+import Wallpapers from "./components/Wallpapers";
 
 const App = () => {
     return (
@@ -25,6 +26,7 @@ const App = () => {
                     <Route path="/home" element={<Home />} />
                     <Route path="/favourite-anime" element={<FavouriteAnime />} />
                     <Route path="/watch-later" element={<WatchLater />} />
+                    <Route path="/wallpapers" element={<Wallpapers />} />
                     <Route path="/settings" element={<Settings />} />
                 </Routes>
             </BrowserRouter>

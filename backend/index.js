@@ -94,6 +94,14 @@ const WatchLaterSchema = new mongoose.Schema({
     youtubeEmbedUrl: String
 });
 const WatchLater = mongoose.model("WatchLater", WatchLaterSchema);
+// // ========== Wallpaper Schema ==========
+const wallpaperSchema = new mongoose.Schema({
+    title: { type: String, required: true },
+    url: { type: String, required: true },
+    tags: [String],
+}, { timestamps: true });
+
+const Wallpaper = mongoose.model('Wallpaper', wallpaperSchema);
 // Register API
 app.post("/register", async (req, res) => {
     const { name, email, password } = req.body;
@@ -380,6 +388,12 @@ app.get("/refresh-anime", async (req, res) => {
         console.error("Error in manual refresh:", err);
         res.status(500).json({ message: "Error refreshing anime data", error: err });
     }
+});
+
+// Get wallpapers
+app.get("/wallpapers", async (req, res) => {
+    const wallpapers = await Wallpaper.find();
+    res.json(wallpapers);
 });
 
 // Get all anime with auto-fetch if empty
