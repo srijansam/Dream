@@ -49,7 +49,7 @@ export default function FavouriteAnime() {
             if (favorites.has(anime._id)) {
                 await axios.delete(`https://hokagee.onrender.com/favourite_anime/${anime._id}`, {
                     headers: { Authorization: `Bearer ${token}` },
-                    data: { userId: decoded.userId }
+                    //data: { userId: decoded.userId }
                 });
                 setFavorites(prev => {
                     const newSet = new Set(prev);
@@ -97,8 +97,8 @@ export default function FavouriteAnime() {
                                         <iframe width="100%" height="200" src={anime.youtubeEmbedUrl} title={anime.title} frameBorder="0" allow="fullscreen"></iframe>
                                     </div>
                                     <div className="card-body">
-                                        <h5 className="card-title">{anime.title}</h5>
-                                        <p className="card-text">{anime.description}</p>
+                                        <h5 className="card-title">{anime.description}</h5>
+                                        <p className="card-text">{anime.title}</p>
                                         <button 
                                             className="heart-btn"
                                             onClick={() => toggleFavorite(anime)}

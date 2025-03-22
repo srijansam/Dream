@@ -437,11 +437,15 @@ app.post("/favourite_anime", authenticateToken, async (req, res) => {
     await newFav.save();
     res.json({ message: "Added to favourites" });
 });
-
-app.delete("/favourite_anime/:animeId", authenticateToken, async (req, res) => {
-    const userId = req.user.userId;
-    await FavouriteAnime.findOneAndDelete({ userId, animeId: req.params.animeId });
-    res.json({ message: "Removed from favourites" });
+app.delete("/favourite_anime/:id", authenticateToken, async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        await FavouriteAnime.findOneAndDelete({ _id: req.params.id, userId });
+        res.json({ message: "Removed from favourites" });
+    } catch (err) {
+        console.error("Error removing from favourites:", err);
+        res.status(500).json({ message: "Internal server error", error: err });
+    }
 });
 
 app.get("/watch_later", authenticateToken, async (req, res) => {
@@ -472,17 +476,16 @@ app.post("/watch_later", authenticateToken, async (req, res) => {
     }
 });
 
-app.delete("/watch_later/:animeId", authenticateToken, async (req, res) => {
+app.delete("/watch_later/:id", authenticateToken, async (req, res) => {
     try {
         const userId = req.user.userId;
-        await WatchLater.findOneAndDelete({ userId, animeId: req.params.animeId });
+        await WatchLater.findOneAndDelete({ _id: req.params.id, userId });
         res.json({ message: "Removed from watchlist" });
     } catch (err) {
         console.error("Error removing from watch later:", err);
         res.status(500).json({ message: "Internal server error", error: err });
     }
 });
-
 ///////////////////////////////////////////
 app.get("/user", async (req, res) => {
     try {

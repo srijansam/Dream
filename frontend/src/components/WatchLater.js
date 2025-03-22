@@ -56,7 +56,7 @@ export default function WatchLater() {
             const decoded = jwtDecode(token);
             await axios.delete(`https://hokagee.onrender.com/watch_later/${anime._id}`, {
                 headers: { Authorization: `Bearer ${token}` },
-                data: { userId: decoded.userId }
+                //data: { userId: decoded.userId }
             });
 
             setWatchLater(prev => {
@@ -105,8 +105,8 @@ export default function WatchLater() {
                                         <iframe width="100%" height="200" src={anime.youtubeEmbedUrl} title={anime.title} frameBorder="0" allow="fullscreen"></iframe>
                                     </div>
                                     <div className="card-body">
-                                        <h5 className="card-title">{anime.title}</h5>
-                                        <p className="card-text">{anime.description}</p>
+                                        <h5 className="card-title">{anime.description}</h5>
+                                        <p className="card-text">{anime.title}</p>
                                         <button 
                                             className="watch-later-btn"
                                             onClick={() => toggleWatchLater(anime)}
