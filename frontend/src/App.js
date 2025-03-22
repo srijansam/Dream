@@ -12,6 +12,7 @@ import Settings from "./components/Settings";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import "./styles/theme.css";
 import Wallpapers from "./components/Wallpapers";
+import Store from "./components/Store";
 
 const App = () => {
     return (
@@ -27,6 +28,7 @@ const App = () => {
                     <Route path="/favourite-anime" element={<FavouriteAnime />} />
                     <Route path="/watch-later" element={<WatchLater />} />
                     <Route path="/wallpapers" element={<Wallpapers />} />
+                    <Route path="/store" element={<Store />} />
                     <Route path="/settings" element={<Settings />} />
                 </Routes>
             </BrowserRouter>
