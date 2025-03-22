@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import api from "../utils/api";
 import Navbar from "./Navbar";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Helmet } from "react-helmet-async"; // <-- SEO library import
+import { Helmet } from "react-helmet";
+ // <-- SEO library import
 import { jwtDecode } from "jwt-decode";  
 
 export default function Home() {

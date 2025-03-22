@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "./Navbar";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Helmet } from "react-helmet-async"; // <-- SEO library import
+import { Helmet } from "react-helmet";
+// <-- SEO library import
 
 export default function Wallpapers() {
     const [wallpapers, setWallpapers] = useState([]);

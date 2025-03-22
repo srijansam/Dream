@@ -1,6 +1,7 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Helmet } from "react-helmet-async"; // <-- SEO library import
+import { Helmet } from "react-helmet";
+ // <-- SEO library import
 export default function About() {
   return (
     <div 

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom"; // Import Link
-import { Helmet } from "react-helmet-async"; // <-- SEO library import
+import { Helmet } from "react-helmet";
+ // <-- SEO library import
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function Home() {
