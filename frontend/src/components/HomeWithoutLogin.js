@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom"; // Import Link
+import { Helmet } from "react-helmet-async"; // <-- SEO library import
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function Home() {
@@ -36,6 +37,16 @@ export default function Home() {
 
     return (
         <div style={backgroundStyle}>
+              {/* 👇 SEO Helmet Meta Tags 👇 */}
+                                          <Helmet>
+                                          <title>Watch Free Underrated Anime | Hokage Anime Streaming  | Hokage</title>
+                                            <meta 
+                                                name="description" 
+                                                content="Stream hidden gem anime and underrated series for free on Hokage. Discover new anime and watch your favourites." 
+                                            />
+                                            <meta name="keywords" content="free anime streaming, hidden gem anime, underrated anime, hokage, youtube anime, top anime , fav anime, anime for free " />
+                                            <link rel="canonical" href="https://hokagee.onrender.com//homeWithoutLogin" />
+                                        </Helmet>
             {/* Updated Login Button with Link */}
             <Link to="/login" className="login-btn">Login</Link>
 

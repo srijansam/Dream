@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "./Navbar";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { Helmet } from "react-helmet-async"; // <-- SEO library import
 import { jwtDecode } from "jwt-decode"; // Ensure correct import
 
 export default function WatchLater() {
@@ -75,6 +76,16 @@ export default function WatchLater() {
         <>
             <Navbar setSearchQuery={setSearchQuery} />
             <div style={{ background: "linear-gradient(to bottom, #1a1f25, #0c1015)", minHeight: "100vh", color: "white", padding: "20px" }}>
+                                 {/* 👇 SEO Helmet Meta Tags 👇 */}
+                                 <Helmet>
+                              <title>Watch Later Anime Queue | Hokage Streaming</title>
+                                <meta 
+                                    name="description" 
+                                    content="Your watch later list for anime. Never miss an episode with Hokage!" 
+                                />
+                                <meta name="keywords" content="underrated anime, hidden gem anime, free anime streaming, watch anime 2025, best anime, top anime , anime on youtube, hokage " />
+                                <link rel="canonical" href="https://hokagee.onrender.com/watch-later" />
+                            </Helmet>
                 <div className="container mt-4">
                     <h2 className="text-center mb-4">⏳ Watch Later</h2>
 

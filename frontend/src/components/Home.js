@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import api from "../utils/api";
 import Navbar from "./Navbar";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { Helmet } from "react-helmet-async"; // <-- SEO library import
 import { jwtDecode } from "jwt-decode";  
 
 export default function Home() {
@@ -136,6 +137,16 @@ export default function Home() {
         <>
             <Navbar setSearchQuery={setSearchQuery} />
             <div style={backgroundStyle}>
+                 {/* 👇 SEO Helmet Meta Tags 👇 */}
+                              <Helmet>
+                              <title>Watch Free Underrated Anime | Hokage Anime Streaming  | Hokage</title>
+                                <meta 
+                                    name="description" 
+                                    content="Stream hidden gem anime and underrated series for free on Hokage. Discover new anime and watch your favourites." 
+                                />
+                                <meta name="keywords" content="free anime streaming, hidden gem anime, underrated anime, hokage, youtube anime, top anime , fav anime, anime for free " />
+                                <link rel="canonical" href="https://hokagee.onrender.com/" />
+                            </Helmet>
                 <div className="container mt-4">
                     {loading && <h3 className="text-center">Loading anime...</h3>}
                     {error && <h3 className="text-danger text-center">{error}</h3>}

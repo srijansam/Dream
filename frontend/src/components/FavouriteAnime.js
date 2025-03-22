@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "./Navbar";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { Helmet } from "react-helmet-async"; // <-- SEO library import
 import { jwtDecode } from "jwt-decode";
 
 export default function FavouriteAnime() {
@@ -67,6 +68,16 @@ export default function FavouriteAnime() {
         <>
             <Navbar setSearchQuery={setSearchQuery} />
             <div style={{ background: "linear-gradient(to bottom, #1a1f25, #0c1015)", minHeight: "100vh", color: "white", padding: "20px" }}>
+                 {/* 👇 SEO Helmet Meta Tags 👇 */}
+                              <Helmet>
+                              <title>Your Favourite Anime List | Hokage Favourites</title>
+                                <meta 
+                                    name="description" 
+                                    content="Save your favourite anime and create your personal watchlist on Hokage." 
+                                />
+                                <meta name="keywords" content="underrated anime, hidden gem anime, free anime streaming, watch anime 2025, best anime, top anime , anime on youtube " />
+                                <link rel="canonical" href="https://hokagee.onrender.com/favourite-anime" />
+                            </Helmet>
                 <div className="container mt-4">
                     <h2 className="text-center mb-4">❤️ Favourite Anime</h2>
 

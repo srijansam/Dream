@@ -1,6 +1,6 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-
+import { Helmet } from "react-helmet-async"; // <-- SEO library import
 export default function About() {
   return (
     <div 
@@ -12,6 +12,16 @@ export default function About() {
         backgroundRepeat: "no-repeat"
       }}
     >
+      {/* 👇 SEO Helmet Meta Tags 👇 */}
+                                                <Helmet>
+                                                <title>Watch Free Underrated Anime and Download Free Wallpapers  | Hokage Anime Streaming  | Hokage</title>
+                                                  <meta 
+                                                      name="description" 
+                                                      content="Stream hidden gem anime and underrated series for free on Hokage. Discover new anime and watch your favourites." 
+                                                  />
+                                                  <meta name="keywords" content="free anime streaming, hidden gem anime, underrated anime, hokage, youtube anime, top anime , fav anime, anime for free, wallaper, anime wallapper, hd wallpaer, best wallaper, best anime wallpaper " />
+                                                  <link rel="canonical" href="https://hokagee.onrender.com//homeWithoutLogin" />
+                                              </Helmet>
       <div className="container text-center p-5 bg-dark bg-opacity-75 rounded shadow-lg">
         <h1 className="mb-4 fw-bold">🎥 Welcome to Hokage 🎥</h1>
         <p className="lead">

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "./Navbar";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { Helmet } from "react-helmet-async"; // <-- SEO library import
 
 export default function Wallpapers() {
     const [wallpapers, setWallpapers] = useState([]);
@@ -28,6 +29,16 @@ export default function Wallpapers() {
         <>
             <Navbar setSearchQuery={setSearchQuery} />
             <div style={backgroundStyle}>
+              {/* 👇 SEO Helmet Meta Tags 👇 */}
+              <Helmet>
+              <title>Free Anime Wallpapers | Download HD Wallpapers | Hokage</title>
+                <meta 
+                    name="description" 
+                    content="Download free HD anime wallpapers from Hokage. Personalize your device with your favourite anime scenes." 
+                />
+                <meta name="keywords" content="anime wallpaper, best anime wallpaper, free annime wallpaper, HD wallpaper, " />
+                <link rel="canonical" href="https://hokagee.onrender.com/wallpapers" />
+            </Helmet>
                 <div className="container mt-4">
                     <h3 className="text-center mb-4">Wallpapers</h3>
                     <div className="row">
