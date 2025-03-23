@@ -99,15 +99,23 @@ export default function WatchLater() {
                         )}
 
                         {filteredAnime.map((anime) => (
-                            <div key={anime._id} className="col-md-4 mb-4">
-                                <div className="anime-card card shadow-sm">
-                                    <div className="card-img-top" onClick={() => openFullscreen(anime.youtubeEmbedUrl)}>
-                                        <iframe width="100%" height="200" src={anime.youtubeEmbedUrl} title={anime.title} frameBorder="0" allow="fullscreen"></iframe>
+                            <div key={anime._id} className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <div className="anime-card card shadow-sm h-100 d-flex flex-column">
+                                <div className="card-img-top" onClick={() => openFullscreen(anime.youtubeEmbedUrl)}>
+                                    <div className="video-wrapper">
+                                        <iframe
+                                            src={anime.youtubeEmbedUrl}
+                                            title={anime.title}
+                                            frameBorder="0"
+                                            allowFullScreen
+                                        ></iframe>
                                     </div>
-                                    <div className="card-body">
-                                        <h5 className="card-title">{anime.description}</h5>
-                                        <p className="card-text">{anime.title}</p>
-                                        <button 
+                                </div>
+                                <div className="card-body d-flex flex-column justify-content-between">
+                                    <h6 className="card-title mb-1">{anime.description}</h6>
+                                    <p className="card-text small text-muted">{anime.title}</p>
+                                    <div className="button-group mt-auto d-flex justify-content-end">
+                                        <button
                                             className="watch-later-btn"
                                             onClick={() => toggleWatchLater(anime)}
                                         >
@@ -116,6 +124,7 @@ export default function WatchLater() {
                                     </div>
                                 </div>
                             </div>
+                        </div>
                         ))}
                     </div>
 
@@ -126,29 +135,44 @@ export default function WatchLater() {
                             overflow: hidden;
                         }
                         .anime-card:hover {
-                            transform: scale(1.05);
+                            transform: scale(1.03);
                             box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
                         }
-                        .anime-card .card-img-top {
+                        .video-wrapper {
+                            position: relative;
+                            width: 100%;
+                            padding-bottom: 56.25%;
+                        }
+                        .video-wrapper iframe {
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
                             border-radius: 10px 10px 0 0;
                         }
-                         .button-group {
-                        display: flex;
-                        justify-content: space-between;
-                        padding-top: 10px;
-                    }
-
-                    .heart-btn, .watch-later-btn {
-                        background: none;
-                        border: none;
-                        font-size: 24px;
-                        cursor: pointer;
-                        transition: transform 0.2s ease-in-out;
-                    }
-
-                    .heart-btn:hover, .watch-later-btn:hover {
-                        transform: scale(1.2);
-                    }
+                        .watch-later-btn {
+                            background: none;
+                            border: none;
+                            font-size: 22px;
+                            cursor: pointer;
+                            transition: transform 0.2s ease-in-out;
+                            color: white;
+                        }
+                        .watch-later-btn:hover {
+                            transform: scale(1.2);
+                        }
+                        @media (max-width: 576px) {
+                            .card-title {
+                                font-size: 14px;
+                            }
+                            .card-text {
+                                font-size: 12px;
+                            }
+                            .watch-later-btn {
+                                font-size: 20px;
+                            }
+                        }
                     `}</style>
                 </div>
             </div>

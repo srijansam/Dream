@@ -91,24 +91,25 @@ export default function FavouriteAnime() {
                         )}
                         
                         {filteredAnime.map((anime) => (
-                            <div key={anime._id} className="col-md-4 mb-4">
-                                <div className="anime-card card shadow-sm position-relative">
-                                    <div className="card-img-top" onClick={() => window.open(anime.youtubeEmbedUrl, "_blank", "fullscreen=yes")}> 
-                                        <iframe width="100%" height="200" src={anime.youtubeEmbedUrl} title={anime.title} frameBorder="0" allow="fullscreen"></iframe>
-                                    </div>
-                                    <div className="card-body">
-                                        <h5 className="card-title">{anime.description}</h5>
-                                        <p className="card-text">{anime.title}</p>
+                            <div key={anime._id} className="col-12 col-sm-6 col-md-4 mb-4 d-flex">
+                            <div className="anime-card card shadow-sm flex-fill position-relative">
+                                <div className="card-img-top" onClick={() => window.open(anime.youtubeEmbedUrl, "_blank", "fullscreen=yes")}> 
+                                    <iframe width="100%" height="200" src={anime.youtubeEmbedUrl} title={anime.title} frameBorder="0" allow="fullscreen"></iframe>
+                                </div>
+                                <div className="card-body d-flex flex-column">
+                                    <h5 className="card-title">{anime.description}</h5>
+                                    <p className="card-text flex-grow-1">{anime.title}</p>
+                                    <div className="d-flex justify-content-end">
                                         <button 
                                             className="heart-btn"
                                             onClick={() => toggleFavorite(anime)}
                                         >
-                                            {favorites.has(anime._id) ? "🗑️" : "🗑️"}
+                                            🗑️
                                         </button>
-                                       
                                     </div>
                                 </div>
                             </div>
+                        </div>
                         ))}
                     </div>
 
@@ -117,31 +118,35 @@ export default function FavouriteAnime() {
                             transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
                             border-radius: 10px;
                             overflow: hidden;
+                            display: flex;
+                            flex-direction: column;
                         }
                         .anime-card:hover {
-                            transform: scale(1.05);
+                            transform: scale(1.03);
                             box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
                         }
                         .anime-card .card-img-top {
                             border-radius: 10px 10px 0 0;
+                            cursor: pointer;
                         }
-                            .button-group {
-                        display: flex;
-                        justify-content: space-between;
-                        padding-top: 10px;
-                    }
-
-                    .heart-btn, .watch-later-btn {
-                        background: none;
-                        border: none;
-                        font-size: 24px;
-                        cursor: pointer;
-                        transition: transform 0.2s ease-in-out;
-                    }
-
-                    .heart-btn:hover, .watch-later-btn:hover {
-                        transform: scale(1.2);
-                    }
+                        .heart-btn {
+                            background: none;
+                            border: none;
+                            font-size: 24px;
+                            cursor: pointer;
+                            transition: transform 0.2s ease-in-out;
+                        }
+                        .heart-btn:hover {
+                            transform: scale(1.2);
+                        }
+                        @media (max-width: 576px) {
+                            .card-body h5 {
+                                font-size: 1rem;
+                            }
+                            .card-body p {
+                                font-size: 0.9rem;
+                            }
+                        }
                     `}</style>
                 </div>
             </div>

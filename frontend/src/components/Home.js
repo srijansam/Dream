@@ -153,80 +153,107 @@ export default function Home() {
                     {error && <h3 className="text-danger text-center">{error}</h3>}
 
                     <div className="row">
-                        {filteredAnime.map((anime) => (
-                            <div key={anime._id} className="col-md-4 mb-4">
-                                <div className="anime-card card shadow-sm">
-                                    <div 
-                                        className="card-img-top" 
-                                        onClick={() => openFullscreen(anime.youtubeEmbedUrl)}
-                                    >
-                                        <iframe
-                                            width="100%"
-                                            height="200"
-                                            src={anime.youtubeEmbedUrl}
-                                            title={anime.title}
-                                            frameBorder="0"
-                                            allow="fullscreen"
-                                        ></iframe>
-                                    </div>
-                                    <div className="card-body">
-                                        <h5 className="card-title">{anime.description}</h5>
-                                        <div className="button-group">
-                                            <button 
-                                                className="heart-btn"
-                                                onClick={() => toggleFavorite(anime)}
-                                            >
-                                                {favorites.has(anime._id) ? "❤️" : "🤍"}
-                                            </button>
-                                            <button 
-                                                className="watch-later-btn"
-                                                onClick={() => toggleWatchLater(anime)}
-                                            >
-                                                {watchLater.has(anime._id) ? "⏳" : "🕒"}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
+    {filteredAnime.map((anime) => (
+        <div key={anime._id} className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+            <div className="anime-card card shadow-sm h-100 d-flex flex-column">
+                <div 
+                    className="card-img-top embed-responsive embed-responsive-16by9" 
+                    onClick={() => openFullscreen(anime.youtubeEmbedUrl)}
+                >
+                    <iframe
+                        className="embed-responsive-item"
+                        src={anime.youtubeEmbedUrl}
+                        title={anime.title}
+                        allow="fullscreen"
+                    ></iframe>
+                </div>
+                <div className="card-body d-flex flex-column justify-content-between">
+                    <h6 className="card-title text-truncate">{anime.description}</h6>
+                    <div className="button-group mt-2">
+                        <button 
+                            className="heart-btn"
+                            onClick={() => toggleFavorite(anime)}
+                        >
+                            {favorites.has(anime._id) ? "❤️" : "🤍"}
+                        </button>
+                        <button 
+                            className="watch-later-btn"
+                            onClick={() => toggleWatchLater(anime)}
+                        >
+                            {watchLater.has(anime._id) ? "⏳" : "🕒"}
+                        </button>
                     </div>
+                </div>
+            </div>
+        </div>
+    ))}
+</div>
+<style>
+{`
+.anime-card {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #1c1f25;
+    color: white;
+}
 
-                    <style>
-                     {`
-                    .anime-card {
-                        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-                        border-radius: 10px;
-                        overflow: hidden;
-                    }
-                    
-                    .anime-card:hover {
-                        transform: scale(1.05);
-                        box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
-                    }
-                 
-                    .anime-card .card-img-top {
-                        border-radius: 10px 10px 0 0;
-                    }
+.anime-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+}
 
-                    .button-group {
-                        display: flex;
-                        justify-content: space-between;
-                        padding-top: 10px;
-                    }
+.embed-responsive {
+    position: relative;
+    display: block;
+    width: 100%;
+    padding: 0;
+    overflow: hidden;
+    padding-bottom: 56.25%;
+}
 
-                    .heart-btn, .watch-later-btn {
-                        background: none;
-                        border: none;
-                        font-size: 24px;
-                        cursor: pointer;
-                        transition: transform 0.2s ease-in-out;
-                    }
+.embed-responsive iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
 
-                    .heart-btn:hover, .watch-later-btn:hover {
-                        transform: scale(1.2);
-                    }
-                     `}
-                </style>
+.card-title {
+    font-size: 0.95rem;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.heart-btn, .watch-later-btn {
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+}
+
+.heart-btn:hover, .watch-later-btn:hover {
+    transform: scale(1.2);
+}
+
+/* Additional tweak for smaller screens */
+@media (max-width: 576px) {
+    .card-title {
+        font-size: 0.85rem;
+    }
+
+    .heart-btn, .watch-later-btn {
+        font-size: 20px;
+    }
+}
+`}
+</style>
                 </div>
             </div>
         </>

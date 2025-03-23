@@ -7,7 +7,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 const Navbar = ({ setSearchQuery }) => {
     const [user, setUser] = useState(null);
     const [localSearch, setLocalSearch] = useState("");
-
+    const [isCollapsed, setIsCollapsed] = useState(false);
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -35,15 +35,29 @@ const Navbar = ({ setSearchQuery }) => {
     };
 
     return (
-        <nav className="navbar navbar-expand-lg">
-            <div className="container-fluid">
-                <Sidebar user={user} />
-                <img src="/assets/kakashi_icon.png" alt="Kakashi Icon" style={{ width: "100px", height: "60px" }} />
-                <a className="navbar-brand fw-bold" href="#">HOKAGE</a>
+        <nav className="navbar navbar-expand-lg navbar-dark bg-dark py-3">
+            <div className="container-fluid d-flex align-items-center flex-wrap">
+                {/* Sidebar & Logo */}
+                <div className="d-flex align-items-center me-auto">
+                    <Sidebar />
+                    <img src="/assets/kakashi_icon.png" alt="Kakashi Icon" style={{ width: "80px", height: "50px" }} />
+                    <a className="navbar-brand fw-bold ms-2" href="#">HOKAGE</a>
+                </div>
 
-                <div className="collapse navbar-collapse justify-content-center">
+                {/* Toggler for small screens */}
+                <button
+                    className="navbar-toggler ms-2"
+                    type="button"
+                    onClick={() => setIsCollapsed(!isCollapsed)}
+                >
+                    <span className="navbar-toggler-icon"></span>
+                </button>
+
+                {/* Collapsible area */}
+                <div className={`collapse navbar-collapse ${isCollapsed ? "show" : ""}`}>
+                    {/* Search Bar */}
                     {setSearchQuery && (
-                        <form className="d-flex" role="search" style={{ width: "50%" }} onSubmit={handleSearch}>
+                        <form className="d-flex mx-auto my-3 my-lg-0" role="search" style={{ width: "60%" }} onSubmit={handleSearch}>
                             <input
                                 className="form-control me-2"
                                 type="search"
@@ -55,15 +69,36 @@ const Navbar = ({ setSearchQuery }) => {
                             <button className="btn btn-outline-light" type="submit">Search</button>
                         </form>
                     )}
-                </div>
 
-                <div className="d-flex align-items-center">
-                    <ThemeToggle />
-                    <span className="navbar-text fw-bold ms-3 me-3">
-                        {user ? user.name : "Guest"}
-                    </span>
+                    {/* Theme Toggle & User */}
+                    <div className="d-flex align-items-center justify-content-center mt-3 mt-lg-0 ms-lg-3">
+                        <ThemeToggle />
+                        <span className="navbar-text fw-bold ms-3">
+                            {user ? user.name : "Guest"}
+                        </span>
+                    </div>
                 </div>
             </div>
+            {/* Custom styles */}
+            <style jsx>{`
+                .navbar-brand {
+                    font-size: 1.4rem;
+                }
+
+                @media (max-width: 768px) {
+                    .navbar-brand {
+                        font-size: 1.2rem;
+                    }
+
+                    form {
+                        width: 100% !important;
+                    }
+
+                    .navbar-text {
+                        font-size: 0.9rem;
+                    }
+                }
+            `}</style>
         </nav>
     );
 };

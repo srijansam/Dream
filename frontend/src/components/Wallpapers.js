@@ -45,11 +45,12 @@ export default function Wallpapers() {
                     <div className="row">
                         {filteredWallpapers.length > 0 ? (
                             filteredWallpapers.map((wp) => (
-                                <div key={wp._id} className="col-md-4 mb-4">
-                                    <div className="card wallpaper-card shadow-sm">
+                                <div key={wp._id} className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                    <div className="card wallpaper-card shadow-sm h-100">
                                         <div
                                             className="wallpaper-img-container"
                                             onClick={() => window.open(wp.url, "_blank")}
+                                        
                                         >
                                             <img
                                                 src={wp.url}
@@ -83,15 +84,19 @@ export default function Wallpapers() {
                     border-radius: 10px;
                     overflow: hidden;
                     cursor: pointer;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
                 }
 
                 .wallpaper-card:hover {
-                    transform: scale(1.05);
+                    transform: scale(1.03);
                     box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
                 }
 
                 .wallpaper-img-container img {
-                    height: 250px;
+                    height: 220px;
+                    width: 100%;
                     object-fit: cover;
                     transition: opacity 0.3s;
                     border-radius: 10px 10px 0 0;
@@ -110,7 +115,19 @@ export default function Wallpapers() {
                 }
 
                 .icon-btn:hover {
-                    transform: scale(1.3);
+                    transform: scale(1.2);
+                }
+
+                @media (max-width: 576px) {
+                    .wallpaper-img-container img {
+                        height: 180px;
+                    }
+                }
+
+                @media (max-width: 400px) {
+                    .wallpaper-img-container img {
+                        height: 150px;
+                    }
                 }
             `}</style>
         </>
