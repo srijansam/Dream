@@ -855,6 +855,10 @@ app.post("/reset-password", async (req, res) => {
         res.status(500).json({ message: "Server error", error: error.message });
     }
 });
+app.get('/sitemap.xml', (req, res) => {
+    res.header('Content-Type', 'application/xml');
+    res.sendFile(path.join(__dirname, 'public/sitemap.xml'));
+});
 
 // Add this at the end of the file, after all other routes
 // This route serves the React app in production
