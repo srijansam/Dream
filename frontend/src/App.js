@@ -27,7 +27,7 @@ const App = () => {
                     <Route path="/home" element={<Home />} />
                     <Route path="/favourite-anime" element={<FavouriteAnime />} />
                     <Route path="/watch-later" element={<WatchLater />} />
-                    <Route path="/wallpapers" element={<Wallpapers />} />
+                    <Route path="/anime-wallpapers" element={<Wallpapers />} />
                     <Route path="/store" element={<Store />} />
                     <Route path="/settings" element={<Settings />} />
                 </Routes>
