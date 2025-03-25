@@ -40,7 +40,12 @@
     <priority>0.7</priority>
     <changefreq>weekly</changefreq>
   </url>
-
+  <!-- Wallpaper -->
+  <url>
+    <loc>https://hokagee.onrender.com/anime-wallpapers</loc>
+    <priority>0.7</priority>
+    <changefreq>weekly</changefreq>
+  </url>
   <!-- Anime detail template (example entry) -->
   <url>
     <loc>https://hokagee.onrender.com/anime/one-piece</loc>
