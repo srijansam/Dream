@@ -855,9 +855,9 @@ app.post("/reset-password", async (req, res) => {
         res.status(500).json({ message: "Server error", error: error.message });
     }
 });
-app.get('/sitemap.xml', (req, res) => {
+app.get('/sitemaps.xml', (req, res) => {
     res.header('Content-Type', 'application/xml');
-    res.sendFile(path.join(__dirname, 'public/sitemap.xml'));
+    res.sendFile(path.join(__dirname, 'public/sitemaps.xml'));
 });
 
 // Add this at the end of the file, after all other routes
