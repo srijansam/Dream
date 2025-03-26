@@ -15,13 +15,16 @@ export default function About() {
     >
       {/* 👇 SEO Helmet Meta Tags 👇 */}
                                                 <Helmet>
-                                                <title>Watch Free Underrated Anime and Download Free Wallpapers  | Hokage Anime Streaming  | Hokage</title>
-                                                  <meta 
-                                                      name="description" 
-                                                      content="Stream hidden gem anime and underrated series for free on Hokage. Discover new anime and watch your favourites." 
-                                                  />
-                                                  <meta name="keywords" content="free anime streaming, hidden gem anime, underrated anime, hokage, youtube anime, top anime , fav anime, anime for free, wallaper, anime wallapper, hd wallpaer, best wallaper, best anime wallpaper " />
-                                                  <link rel="canonical" href="https://hokagee.onrender.com//homeWithoutLogin" />
+                                                <title>Watch Free Underrated Anime & Download 4K Wallpapers | Hokage</title>
+
+                                                <meta 
+    name="description" 
+    content="Stream hidden gem anime for free on Hokage. Watch underrated anime, explore top picks, and download 4K anime wallpapers for desktop and mobile."
+/>
+
+<meta name="keywords" content="free anime streaming, underrated anime, hidden gem anime, Hokage anime, 4K anime wallpapers, best anime wallpapers, anime desktop wallpapers, anime phone wallpapers" />
+
+                                                  <link rel="canonical" href="https://hokagee.onrender.com/homeWithoutLogin" />
                                               </Helmet>
       <div className="container text-center p-5 bg-dark bg-opacity-75 rounded shadow-lg">
         <h1 className="mb-4 fw-bold display-5">🎥 Welcome to Hokage 🎥</h1>
