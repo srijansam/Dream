@@ -39,7 +39,9 @@ export default function Home() {
     };
 
     return (
-        <div style={backgroundStyle}>
+        // <div style={backgroundStyle}>
+        <div className={`main-container ${showNotification ? 'with-notification' : ''}`} style={backgroundStyle}>
+
               {/* 👇 SEO Helmet Meta Tags 👇 */}
                                           <Helmet>
                                           <title>Watch Free Underrated Anime | Hokage Anime Streaming  | Hokage</title>
@@ -63,7 +65,7 @@ export default function Home() {
             <Link to="/login" className="login-btn">Login</Link>
 
             <div className="container mt-4">
-                <h1 className="mb-4 text-center">🎥 Hokage 🎥</h1>
+                <h1 className="mb-4 text-center"> Hokage </h1>
 
                 {loading && <h3 className="text-center">Loading anime...</h3>}
                 {error && <h3 className="text-danger text-center">{error}</h3>}
@@ -182,6 +184,10 @@ export default function Home() {
                         padding: 5px;
                     }
                 }
+                    .main-container.with-notification {
+                        padding-top: 70px; 
+                    }
+
             `}</style>
         </div>
     );
