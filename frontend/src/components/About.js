@@ -15,7 +15,7 @@ export default function About() {
     >
       {/* 👇 SEO Helmet Meta Tags 👇 */}
                                                 <Helmet>
-                                                <title>Watch Free Underrated Anime & Download 4K Wallpapers | Hokage</title>
+                                                <title>Watch Underrated Anime & Download 4K Wallpapers | Hokage</title>
 
                                                 <meta 
     name="description" 
